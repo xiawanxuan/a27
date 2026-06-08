@@ -1,0 +1,83 @@
+.taxonomy-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.taxonomy-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.taxonomy-card :global(.ant-card-head-title) {
+  font-weight: 600;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 18px;
+}
+
+.tree-container {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  min-height: 400px;
+}
+
+.taxonomy-tree {
+  background: transparent;
+}
+
+.tree-node-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  width: 100%;
+}
+
+.tree-node-title:hover {
+  background: rgba(46, 125, 50, 0.1);
+}
+
+.node-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.node-latin {
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
+
+.node-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tree-node-title:hover .node-actions {
+  opacity: 1;
+}
+
+.taxonomy-form {
+  margin-top: 16px;
+}
+
+.taxonomy-form :global(.ant-form-item-label > label) {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .node-actions {
+    opacity: 1;
+  }
+
+  .tree-container {
+    padding: 8px;
+  }
+}

@@ -1,0 +1,40 @@
+.specimen-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1B5E20;
+  margin: 0;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.form-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.form-card :global(.ant-divider-inner-text) {
+  font-weight: 600;
+  font-family: 'Lora', Georgia, serif;
+  color: #2E7D32;
+}
+
+.form-card :global(.ant-form-item-label > label) {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .page-header h2 {
+    font-size: 18px;
+  }
+}

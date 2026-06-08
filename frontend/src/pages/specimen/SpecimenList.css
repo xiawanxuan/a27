@@ -1,0 +1,55 @@
+.specimen-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filter-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.filter-card :global(.ant-form-item) {
+  margin-bottom: 0;
+}
+
+.table-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.card-header span {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.latin-name {
+  font-style: italic;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .filter-card :global(.ant-form-inline) {
+    flex-wrap: wrap;
+  }
+  
+  .filter-card :global(.ant-form-item) {
+    margin-right: 0 !important;
+    margin-bottom: 12px;
+    flex: 1 1 100%;
+  }
+  
+  .filter-card :global(.ant-input),
+  .filter-card :global(.ant-select),
+  .filter-card :global(.ant-picker) {
+    width: 100% !important;
+  }
+}

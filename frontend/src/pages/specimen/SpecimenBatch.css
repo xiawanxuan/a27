@@ -1,0 +1,133 @@
+.specimen-batch-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1B5E20;
+  margin: 0;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.steps-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.upload-card,
+.preview-card,
+.result-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.upload-card :global(.ant-card-head-title),
+.preview-card :global(.ant-card-head-title) {
+  font-weight: 600;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.template-download {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+.preview-stats {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.result-card {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.result-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto 24px;
+}
+
+.result-icon.success {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.result-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 24px;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.result-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.stat-item.success .stat-value {
+  color: #2E7D32;
+}
+
+.stat-item.error .stat-value {
+  color: #F44336;
+}
+
+@media (max-width: 768px) {
+  .result-stats {
+    gap: 24px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .preview-card :global(.ant-card-extra) {
+    margin-top: 12px;
+    width: 100%;
+  }
+}

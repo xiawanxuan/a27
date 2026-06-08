@@ -1,0 +1,54 @@
+.user-management-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-card,
+.table-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.search-card :global(.ant-card-body) {
+  padding-bottom: 0;
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.table-card :global(.ant-card-head-title) {
+  font-weight: 600;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 18px;
+}
+
+.user-form {
+  margin-top: 16px;
+}
+
+.user-form :global(.ant-form-item-label > label) {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column;
+  }
+
+  .search-form :global(.ant-form-item) {
+    margin-right: 0 !important;
+    margin-bottom: 12px;
+  }
+
+  .search-form :global(.ant-form-item-control-input) {
+    min-width: 100% !important;
+  }
+
+  .table-card :global(.ant-table) {
+    font-size: 13px;
+  }
+}
