@@ -30,8 +30,9 @@ func can_accept_item(item: DraggableItem) -> bool:
 	return true
 
 func accept_item(item: DraggableItem) -> void:
-	if current_item and current_item != item:
-		current_item.reset_to_original()
+	var old_item = replace_item(item)
+	if old_item and old_item != item:
+		old_item.reset_to_original()
 	
 	current_item = item
 	item.remove_from_parent()
@@ -62,6 +63,14 @@ func clear_slot() -> void:
 	if current_item:
 		current_item.queue_free()
 		current_item = null
+
+func replace_item(new_item: DraggableItem) -> DraggableItem:
+	var old_item = current_item
+	if old_item and old_item != new_item:
+		current_item = null
+		item_removed.emit(old_item, self)
+		_on_item_removed(old_item)
+	return old_item
 
 func _on_item_accepted(item: DraggableItem) -> void:
 	pass

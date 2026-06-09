@@ -166,12 +166,12 @@ func _on_correct_pair(slot: DropSlot, item: ElementTile) -> void:
 	_check_completion()
 
 func _on_wrong_pair(slot: DropSlot, item: ElementTile) -> void:
+	slot.remove_item()
+	
 	var tween := create_tween()
-	var original_pos = item.position
-	tween.tween_property(item, "position:x", original_pos.x - 10, 0.05)
-	tween.tween_property(item, "position:x", original_pos.x + 10, 0.05)
-	tween.tween_property(item, "position:x", original_pos.x - 10, 0.05)
-	tween.tween_property(item, "position:x", original_pos.x, 0.05)
+	tween.set_parallel(true)
+	tween.tween_property(item, "modulate", Color(1.0, 0.5, 0.5, 1.0), 0.1)
+	tween.chain().tween_property(item, "modulate", Color.WHITE, 0.1)
 	
 	item.reset_to_original()
 
@@ -266,26 +266,32 @@ func _load_game_state() -> void:
 		return
 	
 	var data = GameManager.save_system.load_he_tu_state()
-	if data.is_empty() or data.get("completed", false):
+	if data.is_empty():
 		return
 	
 	var pairs_state = data.get("pairs", [])
 	var remaining_elements: Array[String] = data.get("remaining_elements", [])
+	var saved_completed: bool = data.get("completed", false)
+	var saved_completed_pairs: int = data.get("completed_pairs", 0)
 	
 	if pairs_state.is_empty():
 		return
 	
 	for child in elements_panel.get_children():
-		child.queue_free()
+		if is_instance_valid(child):
+			child.queue_free()
 	
 	for slot in pair_slots:
-		slot.queue_free()
+		if is_instance_valid(slot):
+			slot.queue_free()
 	pair_slots.clear()
 	
 	for child in pairs_container.get_children():
-		child.queue_free()
+		if is_instance_valid(child):
+			child.queue_free()
 	
 	completed_pairs = 0
+	is_completed = false
 	
 	for pair_data in pairs_state:
 		var conqueror: String = pair_data.get("conqueror", "")
@@ -316,6 +322,7 @@ func _load_game_state() -> void:
 			remaining_elements.erase(element)
 			var tile = element_tile_scene.instantiate()
 			tile.set_element(element)
+			tile.drag_ended.connect(_on_element_drag_ended)
 			
 			var bg_color = FiveElements.get_element_color(element)
 			var stylebox := StyleBoxFlat.new()
@@ -342,6 +349,7 @@ func _load_game_state() -> void:
 	for element in remaining_elements:
 		var tile = element_tile_scene.instantiate()
 		tile.set_element(element)
+		tile.drag_ended.connect(_on_element_drag_ended)
 		
 		var bg_color = FiveElements.get_element_color(element)
 		var stylebox := StyleBoxFlat.new()
@@ -357,8 +365,11 @@ func _load_game_state() -> void:
 		stylebox.corner_radius_bottom_left = 8
 		tile.add_theme_stylebox_override("panel", stylebox)
 		
-		tile.drag_ended.connect(_on_element_drag_ended)
 		elements_panel.add_child(tile)
+	
+	if saved_completed or saved_completed_pairs >= total_pairs:
+		is_completed = true
+		completed_pairs = total_pairs
 	
 	_update_progress()
 

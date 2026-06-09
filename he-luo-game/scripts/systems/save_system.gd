@@ -55,9 +55,17 @@ func load_game(slot_name: String) -> Dictionary:
 	var json_str = file.get_as_text()
 	file.close()
 	
+	if json_str.is_empty():
+		load_failed.emit("存档文件为空")
+		return {}
+	
 	var parsed = JSON.parse(json_str)
 	if parsed.error != OK:
 		load_failed.emit("存档文件格式错误")
+		return {}
+	
+	if typeof(parsed.data) != TYPE_DICTIONARY:
+		load_failed.emit("存档数据类型错误")
 		return {}
 	
 	current_slot = slot_name

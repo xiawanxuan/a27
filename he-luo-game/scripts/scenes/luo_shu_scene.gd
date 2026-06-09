@@ -263,7 +263,7 @@ func _load_game_state() -> void:
 		return
 	
 	var data = GameManager.save_system.load_luo_shu_state()
-	if data.is_empty() or data.get("completed", false):
+	if data.is_empty():
 		return
 	
 	var saved_grid = data.get("grid", [])
@@ -271,10 +271,23 @@ func _load_game_state() -> void:
 		return
 	
 	var remaining_numbers: Array[int] = data.get("remaining_numbers", [])
+	var saved_completed: bool = data.get("completed", false)
+	var saved_hint_used: int = data.get("hint_used", 0)
+	
+	for slot in grid_slots:
+		slot.clear_slot()
 	
 	for tile in number_tiles:
-		tile.queue_free()
+		if is_instance_valid(tile):
+			tile.queue_free()
 	number_tiles.clear()
+	
+	grid = []
+	for r in range(GRID_SIZE):
+		var row: Array[int] = []
+		for c in range(GRID_SIZE):
+			row.append(0)
+		grid.append(row)
 	
 	for r in range(GRID_SIZE):
 		for c in range(GRID_SIZE):
@@ -299,6 +312,14 @@ func _load_game_state() -> void:
 		numbers_hbox.add_child(tile)
 		number_tiles.append(tile)
 		tile.drag_ended.connect(_on_tile_drag_ended)
+	
+	is_completed = saved_completed
+	hint_used = saved_hint_used
+	
+	if is_completed:
+		for slot in grid_slots:
+			if slot.current_item is NumberTile:
+				slot.current_item.set_correct_state(true)
 
 func _get_ui_manager() -> UIManager:
 	var ui_manager = get_tree().get_first_node_in_group("ui_manager")
