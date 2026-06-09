@@ -80,19 +80,34 @@ layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
+[node name="UndoButton" type="Button" parent="MainPanel/VBox/ControlPanel"]
+layout_mode = 2
+text = "撤销"
+custom_minimum_size = Vector2(60, 40)
+
+[node name="RedoButton" type="Button" parent="MainPanel/VBox/ControlPanel"]
+layout_mode = 2
+text = "重做"
+custom_minimum_size = Vector2(60, 40)
+
 [node name="HintButton" type="Button" parent="MainPanel/VBox/ControlPanel"]
 layout_mode = 2
 text = "提示"
-custom_minimum_size = Vector2(80, 40)
+custom_minimum_size = Vector2(60, 40)
+
+[node name="BaguaButton" type="Button" parent="MainPanel/VBox/ControlPanel"]
+layout_mode = 2
+text = "八卦"
+custom_minimum_size = Vector2(60, 40)
 
 [node name="ResetButton" type="Button" parent="MainPanel/VBox/ControlPanel"]
 layout_mode = 2
 text = "重置"
-custom_minimum_size = Vector2(80, 40)
+custom_minimum_size = Vector2(60, 40)
 
 [node name="BackButton" type="Button" parent="MainPanel/VBox/ControlPanel"]
 layout_mode = 2
 text = "返回"
-custom_minimum_size = Vector2(80, 40)
+custom_minimum_size = Vector2(60, 40)
 
 [node name="UIManager" parent="." instance=ExtResource("2")]

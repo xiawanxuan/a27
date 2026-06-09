@@ -2,7 +2,10 @@ extends Control
 
 @onready var elements_panel: VBoxContainer = $MainPanel/VBox/ContentHBox/ElementsPanel
 @onready var pairs_container: VBoxContainer = $MainPanel/VBox/ContentHBox/PairsContainer
+@onready var undo_button: Button = $MainPanel/VBox/ControlPanel/UndoButton
+@onready var redo_button: Button = $MainPanel/VBox/ControlPanel/RedoButton
 @onready var hint_button: Button = $MainPanel/VBox/ControlPanel/HintButton
+@onready var bagua_button: Button = $MainPanel/VBox/ControlPanel/BaguaButton
 @onready var reset_button: Button = $MainPanel/VBox/ControlPanel/ResetButton
 @onready var back_button: Button = $MainPanel/VBox/ControlPanel/BackButton
 @onready var title_label: Label = $MainPanel/VBox/TitleLabel
@@ -15,14 +18,23 @@ var pair_slots: Array[Node] = []
 var completed_pairs: int = 0
 var total_pairs: int = 5
 var is_completed: bool = false
+var history: HistoryManager = null
+var _suppress_history: bool = false
 
 func _ready() -> void:
 	element_tile_scene = preload("res://scenes/components/element_tile.tscn")
+	_init_history()
 	_init_elements()
 	_init_pair_slots()
 	_connect_signals()
 	_load_game_state()
 	_update_progress()
+	_update_undo_buttons()
+
+func _init_history() -> void:
+	history = HistoryManager.new()
+	add_child(history)
+	history.history_changed.connect(_on_history_changed)
 
 func _init_elements() -> void:
 	available_elements = FiveElements.get_shuffled_elements()
@@ -132,7 +144,10 @@ func _create_conquered_slot(conqueror: String) -> DropSlot:
 	return slot
 
 func _connect_signals() -> void:
+	undo_button.pressed.connect(_on_undo_pressed)
+	redo_button.pressed.connect(_on_redo_pressed)
 	hint_button.pressed.connect(_on_hint_pressed)
+	bagua_button.pressed.connect(_on_bagua_pressed)
 	reset_button.pressed.connect(_on_reset_pressed)
 	back_button.pressed.connect(_on_back_pressed)
 
@@ -153,6 +168,19 @@ func _on_pair_slot_dropped(item: DraggableItem, slot: DropSlot) -> void:
 		_on_wrong_pair(slot, item)
 
 func _on_correct_pair(slot: DropSlot, item: ElementTile) -> void:
+	var element_name: String = item.element_name
+	var conqueror_name: String = slot.get_meta("conqueror", "")
+	
+	if not _suppress_history:
+		var action_data := {
+			"type": "he_tu_pair",
+			"conqueror": conqueror_name,
+			"conquered": element_name,
+			"correct": true
+		}
+		history.push_action(action_data)
+		_update_undo_buttons()
+	
 	completed_pairs += 1
 	item.set_correct_state(true)
 	slot.modulate = Color(1.2, 1.2, 1.0, 1.0)
@@ -204,6 +232,298 @@ func _on_victory_continue() -> void:
 func _on_victory_replay() -> void:
 	_on_reset_pressed()
 
+func _on_history_changed(can_undo: bool, can_redo: bool) -> void:
+	_update_undo_buttons()
+
+func _update_undo_buttons() -> void:
+	if undo_button and history:
+		undo_button.disabled = not history.can_undo()
+	if redo_button and history:
+		redo_button.disabled = not history.can_redo()
+
+func _on_undo_pressed() -> void:
+	if not history or not history.can_undo():
+		return
+	
+	var action = history.undo()
+	if action.is_empty():
+		return
+	
+	_apply_history_action(action, true)
+	_save_game_state()
+	_update_progress()
+
+func _on_redo_pressed() -> void:
+	if not history or not history.can_redo():
+		return
+	
+	var action = history.redo()
+	if action.is_empty():
+		return
+	
+	_apply_history_action(action, false)
+	_save_game_state()
+	_update_progress()
+
+func _apply_history_action(action: Dictionary, is_undo: bool) -> void:
+	_suppress_history = true
+	
+	if action.get("type", "") == "he_tu_pair" and action.get("correct", false):
+		var conquered: String = action.get("conquered", "")
+		var conqueror: String = action.get("conqueror", "")
+		
+		if is_undo:
+			_undo_pair(conquered, conqueror)
+		else:
+			_redo_pair(conquered, conqueror)
+	
+	_suppress_history = false
+
+func _undo_pair(conquered: String, conqueror: String) -> void:
+	for slot in pair_slots:
+		if slot is DropSlot:
+			var slot_conqueror: String = slot.get_meta("conqueror", "")
+			if slot_conqueror == conqueror and slot.has_item():
+				var item: ElementTile = slot.current_item
+				if item and item.element_name == conquered:
+					var removed_item = slot.remove_item()
+					if removed_item:
+						removed_item.set_correct_state(false)
+						removed_item.reset_to_original()
+					
+					slot.modulate = Color.WHITE
+					
+					var hint_label: Label = slot.get_child(1)
+					if hint_label:
+						hint_label.visible = true
+					
+					completed_pairs -= 1
+					is_completed = false
+					break
+
+func _redo_pair(conquered: String, conqueror: String) -> void:
+	for slot in pair_slots:
+		if slot is DropSlot:
+			var slot_conqueror: String = slot.get_meta("conqueror", "")
+			if slot_conqueror == conqueror and not slot.has_item():
+				for tile in elements_panel.get_children():
+					if tile is ElementTile and tile.element_name == conquered:
+						slot.accept_item(tile)
+						tile.set_correct_state(true)
+						slot.modulate = Color(1.2, 1.2, 1.0, 1.0)
+						
+						var hint_label: Label = slot.get_child(1)
+						if hint_label:
+							hint_label.visible = false
+						
+						completed_pairs += 1
+						_check_completion()
+						break
+				break
+
+func _on_bagua_pressed() -> void:
+	if not is_completed:
+		var ui_manager = _get_ui_manager()
+		if ui_manager:
+			ui_manager.show_hint("请先完成五行相克配对再推演八卦！")
+		return
+	
+	_show_bagua_dialog()
+
+func _show_bagua_dialog() -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "卦象推演"
+	dialog.ok_button_text = "关闭"
+	dialog.custom_minimum_size = Vector2(500, 500)
+	
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	
+	var title_label := Label.new()
+	title_label.text = "五行与八卦对应"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(title_label)
+	
+	var desc_label := Label.new()
+	desc_label.text = "点击卦象查看详细解释"
+	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	desc_label.modulate = Color(0.7, 0.7, 0.7)
+	vbox.add_child(desc_label)
+	
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(450, 380)
+	vbox.add_child(scroll)
+	
+	var content_vbox := VBoxContainer.new()
+	content_vbox.add_theme_constant_override("separation", 10)
+	scroll.add_child(content_vbox)
+	
+	var elements = FiveElements.get_all_elements()
+	for element in elements:
+		var element_panel := _create_element_bagua_panel(element)
+		content_vbox.add_child(element_panel)
+	
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _create_element_bagua_panel(element: String) -> Control:
+	var panel := PanelContainer.new()
+	
+	var stylebox := StyleBoxFlat.new()
+	var color = FiveElements.get_element_color(element)
+	stylebox.bg_color = color
+	stylebox.bg_color.a = 0.3
+	stylebox.border_width_left = 2
+	stylebox.border_width_right = 2
+	stylebox.border_width_top = 2
+	stylebox.border_width_bottom = 2
+	stylebox.border_color = color.darkened(0.2)
+	stylebox.corner_radius_top_left = 8
+	stylebox.corner_radius_top_right = 8
+	stylebox.corner_radius_bottom_right = 8
+	stylebox.corner_radius_bottom_left = 8
+	panel.add_theme_stylebox_override("panel", stylebox)
+	
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	vbox.offset_left = 10
+	vbox.offset_top = 8
+	vbox.offset_right = -10
+	vbox.offset_bottom = -8
+	panel.add_child(vbox)
+	
+	var element_label := Label.new()
+	element_label.text = element + "行"
+	element_label.add_theme_font_size_override("font_size", 18)
+	element_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(element_label)
+	
+	var trigrams_hbox := HBoxContainer.new()
+	trigrams_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	trigrams_hbox.add_theme_constant_override("separation", 15)
+	vbox.add_child(trigrams_hbox)
+	
+	var trigram_list: Array[String] = []
+	for trigram in BaguaSystem.get_all_trigrams():
+		if BaguaSystem.get_trigram_element(trigram) == element:
+			trigram_list.append(trigram)
+	
+	for trigram_name in trigram_list:
+		var trigram_panel := PanelContainer.new()
+		trigram_panel.custom_minimum_size = Vector2(90, 100)
+		
+		var t_stylebox := StyleBoxFlat.new()
+		t_stylebox.bg_color = Color.WHITE
+		t_stylebox.bg_color.a = 0.85
+		t_stylebox.corner_radius_top_left = 6
+		t_stylebox.corner_radius_top_right = 6
+		t_stylebox.corner_radius_bottom_right = 6
+		t_stylebox.corner_radius_bottom_left = 6
+		trigram_panel.add_theme_stylebox_override("panel", t_stylebox)
+		
+		var t_vbox := VBoxContainer.new()
+		t_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		t_vbox.add_theme_constant_override("separation", 2)
+		
+		var symbol_label := Label.new()
+		symbol_label.text = BaguaSystem.get_trigram_symbol(trigram_name)
+		symbol_label.add_theme_font_size_override("font_size", 36)
+		symbol_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		symbol_label.add_theme_color_override("font_color", Color.BLACK)
+		t_vbox.add_child(symbol_label)
+		
+		var name_label := Label.new()
+		name_label.text = trigram_name
+		name_label.add_theme_font_size_override("font_size", 14)
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_color_override("font_color", Color.BLACK)
+		t_vbox.add_child(name_label)
+		
+		trigram_panel.add_child(t_vbox)
+		trigram_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+		trigram_panel.gui_input.connect(_on_trigram_gui_input.bind(trigram_name))
+		
+		trigrams_hbox.add_child(trigram_panel)
+	
+	return panel
+
+func _on_trigram_gui_input(event: InputEvent, trigram_name: String) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		_show_trigram_explanation(trigram_name)
+
+func _show_trigram_explanation(trigram_name: String) -> void:
+	var explanation = BaguaSystem.get_trigram_explanation(trigram_name)
+	if explanation.is_empty():
+		return
+	
+	var dialog := AcceptDialog.new()
+	dialog.title = "%s %s - 卦象详解" % [BaguaSystem.get_trigram_symbol(trigram_name), trigram_name]
+	dialog.ok_button_text = "关闭"
+	dialog.custom_minimum_size = Vector2(400, 350)
+	
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	vbox.custom_minimum_size = Vector2(380, 300)
+	
+	var symbol_label := Label.new()
+	symbol_label.text = BaguaSystem.get_trigram_symbol(trigram_name)
+	symbol_label.add_theme_font_size_override("font_size", 64)
+	symbol_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(symbol_label)
+	
+	var name_label := Label.new()
+	name_label.text = explanation.get("name", "")
+	name_label.add_theme_font_size_override("font_size", 24)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(name_label)
+	
+	var info_grid := GridContainer.new()
+	info_grid.columns = 2
+	info_grid.add_theme_constant_override("h_separation", 10)
+	info_grid.add_theme_constant_override("v_separation", 5)
+	
+	var labels := [
+		"五行:",
+		"自然:",
+		"方位:",
+		"德性:"
+	]
+	var values := [
+		explanation.get("element", ""),
+		explanation.get("nature", ""),
+		explanation.get("direction", ""),
+		explanation.get("virtue", "")
+	]
+	
+	for i in range(labels.size()):
+		var label1 := Label.new()
+		label1.text = labels[i]
+		label1.modulate = Color(0.7, 0.7, 0.7)
+		info_grid.add_child(label1)
+		
+		var label2 := Label.new()
+		label2.text = values[i]
+		info_grid.add_child(label2)
+	
+	vbox.add_child(info_grid)
+	
+	var meaning_label := Label.new()
+	meaning_label.text = "象征: %s" % explanation.get("meaning", "")
+	meaning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(meaning_label)
+	
+	var desc_label := Label.new()
+	desc_label.text = explanation.get("description", "")
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc_label.custom_minimum_size = Vector2(360, 0)
+	vbox.add_child(desc_label)
+	
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
 func _on_hint_pressed() -> void:
 	for slot in pair_slots:
 		if slot is DropSlot and not slot.has_item():
@@ -226,10 +546,18 @@ func _on_reset_pressed() -> void:
 			if item:
 				item.reset_to_original()
 				item.set_correct_state(false)
+			
+			slot.modulate = Color.WHITE
+			var hint_label: Label = slot.get_child(1)
+			if hint_label:
+				hint_label.visible = true
 	
 	completed_pairs = 0
 	is_completed = false
+	if history:
+		history.clear()
 	_update_progress()
+	_update_undo_buttons()
 
 func _on_back_pressed() -> void:
 	_save_game_state()
