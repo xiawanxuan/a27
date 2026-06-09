@@ -1,5 +1,7 @@
 .dashboard-page {
   padding: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .welcome-section {
@@ -7,6 +9,12 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  gap: 12px;
+}
+
+.welcome-section > div:first-child {
+  min-width: 0;
+  flex: 1;
 }
 
 .welcome-section h2 {
@@ -15,12 +23,18 @@
   color: #1B5E20;
   margin-bottom: 4px;
   font-family: 'Lora', Georgia, serif;
+  word-break: break-word;
 }
 
 .welcome-section p {
   font-size: 14px;
   color: #666;
   margin: 0;
+  word-break: break-word;
+}
+
+.welcome-section .ant-btn {
+  flex-shrink: 0;
 }
 
 .stats-row {
@@ -31,6 +45,7 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
+  height: 100%;
 }
 
 .stat-card:hover {
@@ -84,6 +99,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   background: #fff;
+  min-width: 0;
 }
 
 .action-item:hover {
@@ -102,17 +118,28 @@
   flex-shrink: 0;
 }
 
+.action-info {
+  min-width: 0;
+  flex: 1;
+}
+
 .action-info h4 {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 4px;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .action-info p {
   font-size: 12px;
   color: #999;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recent-card {
@@ -125,6 +152,10 @@
   font-family: 'Lora', Georgia, serif;
 }
 
+.recent-card :global(.ant-card-extra) {
+  font-size: 13px;
+}
+
 .recent-item {
   cursor: pointer;
   padding: 8px 0 !important;
@@ -135,14 +166,25 @@
   background-color: #f9f9f9;
 }
 
+.recent-item :global(.ant-list-item-meta) {
+  min-width: 0;
+  flex: 1;
+}
+
 .recent-item :global(.ant-list-item-meta-title) {
   font-weight: 500;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recent-item :global(.ant-list-item-meta-description) {
   font-size: 12px;
   color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {
@@ -150,14 +192,23 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    margin-bottom: 16px;
   }
 
   .welcome-section h2 {
     font-size: 20px;
   }
 
+  .welcome-section p {
+    font-size: 13px;
+  }
+
   .stat-card :global(.ant-statistic-content) {
     font-size: 22px;
+  }
+
+  .stat-card :global(.ant-card-body) {
+    padding: 16px !important;
   }
 
   .action-icon {
@@ -173,14 +224,102 @@
   .action-info p {
     font-size: 11px;
   }
+
+  .chart-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
+
+  .quick-actions-card :global(.ant-card-body),
+  .recent-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
 }
 
 @media (max-width: 480px) {
+  .welcome-section {
+    margin-bottom: 12px;
+  }
+
+  .welcome-section h2 {
+    font-size: 18px;
+  }
+
+  .welcome-section p {
+    font-size: 12px;
+  }
+
   .stat-card :global(.ant-statistic-title) {
     font-size: 12px;
   }
 
   .stat-card :global(.ant-statistic-content) {
     font-size: 18px;
+  }
+
+  .stat-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
+
+  .action-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .action-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    border-radius: 8px;
+  }
+
+  .action-info h4 {
+    font-size: 13px;
+  }
+
+  .action-info p {
+    font-size: 11px;
+  }
+
+  .chart-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 40px !important;
+  }
+
+  .chart-card :global(.ant-card-head-title) {
+    font-size: 14px !important;
+    padding: 8px 0 !important;
+  }
+
+  .chart-card :global(.ant-card-body) {
+    padding: 10px !important;
+  }
+
+  .quick-actions-card :global(.ant-card-head),
+  .recent-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 40px !important;
+  }
+
+  .quick-actions-card :global(.ant-card-head-title),
+  .recent-card :global(.ant-card-head-title) {
+    font-size: 14px !important;
+    padding: 8px 0 !important;
+  }
+
+  .quick-actions-card :global(.ant-card-body),
+  .recent-card :global(.ant-card-body) {
+    padding: 10px !important;
+  }
+
+  .recent-item {
+    padding: 6px 0 !important;
+  }
+
+  .recent-item :global(.ant-list-item-meta-title) {
+    font-size: 13px;
+  }
+
+  .recent-item :global(.ant-list-item-meta-description) {
+    font-size: 11px;
   }
 }

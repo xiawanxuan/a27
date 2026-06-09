@@ -41,9 +41,8 @@ const Analysis = () => {
 
   const loadSpecimens = async () => {
     try {
-      const res: any = await getSpecimenList({ page: 1, pageSize: 20 });
-      const data = res.data || res;
-      setSpecimens(data.list || []);
+      const result: any = await getSpecimenList({ page: 1, pageSize: 20 });
+      setSpecimens(result.list || []);
     } catch (error) {
       console.error('加载标本列表失败', error);
     }
@@ -53,8 +52,8 @@ const Analysis = () => {
     setCurrentSpecimen(specimens.find(s => s.id === specimenId) || null);
     setLoading(true);
     try {
-      const data = await getSpecimenFeature(specimenId);
-      setFeatureData(data);
+      const res: any = await getSpecimenFeature(specimenId);
+      setFeatureData(res.data || res);
     } catch (error) {
       setFeatureData(null);
     } finally {

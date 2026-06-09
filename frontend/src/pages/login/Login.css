@@ -31,6 +31,8 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-left {
@@ -93,6 +95,7 @@
   align-items: center;
   justify-content: center;
   font-size: 24px;
+  flex-shrink: 0;
 }
 
 .feature-text h3 {
@@ -113,6 +116,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 .login-card {
@@ -169,6 +173,7 @@
   font-size: 13px;
   color: #999;
   margin: 0;
+  word-break: break-all;
 }
 
 @media (max-width: 992px) {
@@ -179,14 +184,92 @@
   .login-right {
     max-width: 100%;
   }
+
+  .login-card {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .login-card {
+    border-radius: 12px;
+  }
+
+  .login-card :global(.ant-card-body) {
+    padding: 28px 24px;
+  }
+
+  .login-header {
+    margin-bottom: 24px;
+  }
+
+  .login-header h2 {
+    font-size: 24px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .login-btn {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .login-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .demo-account {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
-  .login-card :global(.ant-card-body) {
-    padding: 24px;
+  .login-container {
+    padding: 12px;
+    padding-top: 30px;
   }
-  
+
+  .login-card {
+    border-radius: 10px;
+  }
+
+  .login-card :global(.ant-card-body) {
+    padding: 20px 16px;
+  }
+
+  .login-header {
+    margin-bottom: 20px;
+  }
+
   .login-header h2 {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .login-header p {
+    font-size: 12px;
+  }
+
+  .login-btn {
+    height: 42px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .login-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+
+  .demo-account {
+    font-size: 11px;
   }
 }

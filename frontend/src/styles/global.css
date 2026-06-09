@@ -11,6 +11,12 @@
   box-sizing: border-box;
 }
 
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
 /* 基础样式 */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -19,6 +25,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* 标题字体使用衬线体 */
@@ -69,4 +77,257 @@ button {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* 防止文字溢出 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 表格横向滚动容器 */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ant Design 组件响应式优化 */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .ant-card {
+    border-radius: 8px !important;
+  }
+
+  .ant-card-head {
+    padding: 0 12px !important;
+    min-height: 48px !important;
+  }
+
+  .ant-card-head-title {
+    font-size: 16px !important;
+    padding: 12px 0 !important;
+  }
+
+  .ant-card-body {
+    padding: 16px !important;
+  }
+
+  .ant-btn {
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker {
+    min-height: 36px !important;
+  }
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  .ant-statistic-title {
+    font-size: 12px !important;
+  }
+
+  .ant-statistic-content {
+    font-size: 20px !important;
+  }
+
+  .ant-tabs-nav {
+    margin-bottom: 12px !important;
+  }
+
+  .ant-tabs-tab {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+
+  .ant-descriptions-item-label {
+    font-size: 13px !important;
+  }
+
+  .ant-descriptions-item-content {
+    font-size: 14px !important;
+  }
+
+  .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+    margin: 16px !important;
+  }
+
+  .ant-modal-body {
+    padding: 16px !important;
+  }
+
+  .ant-drawer-body {
+    padding: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
+  body {
+    line-height: 1.5;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  .ant-card-head {
+    padding: 0 12px !important;
+    min-height: 44px !important;
+  }
+
+  .ant-card-head-title {
+    font-size: 15px !important;
+    padding: 10px 0 !important;
+  }
+
+  .ant-card-body {
+    padding: 12px !important;
+  }
+
+  .ant-btn {
+    height: 34px;
+    font-size: 13px;
+    padding: 0 12px;
+  }
+
+  .ant-btn-icon-only {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+  }
+
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker {
+    min-height: 34px !important;
+    font-size: 14px !important;
+  }
+
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: 4px !important;
+  }
+
+  .ant-form-item-label > label {
+    font-size: 13px;
+  }
+
+  .ant-statistic-title {
+    font-size: 11px !important;
+  }
+
+  .ant-statistic-content {
+    font-size: 18px !important;
+  }
+
+  .ant-tag {
+    font-size: 11px;
+    padding: 0 6px;
+    line-height: 20px;
+    height: 20px;
+  }
+
+  .ant-table {
+    font-size: 12px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 8px 12px !important;
+  }
+
+  .ant-pagination {
+    font-size: 12px;
+  }
+
+  .ant-pagination-item,
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    min-width: 28px !important;
+    height: 28px !important;
+    line-height: 26px !important;
+  }
+
+  .ant-modal-header {
+    padding: 12px 16px !important;
+  }
+
+  .ant-modal-title {
+    font-size: 16px !important;
+  }
+
+  .ant-modal-body {
+    padding: 12px 16px !important;
+  }
+
+  .ant-modal-footer {
+    padding: 10px 16px !important;
+  }
+
+  .ant-drawer-header {
+    padding: 12px 16px !important;
+  }
+
+  .ant-drawer-body {
+    padding: 12px !important;
+  }
+
+  .ant-list-item {
+    padding: 10px 0 !important;
+  }
+
+  .ant-space {
+    gap: 8px !important;
+  }
+
+  .ant-space-item {
+    margin-bottom: 4px;
+  }
+}
+
+/* 安全区域适配（iPhone X 等全面屏） */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-left {
+    padding-left: max(0px, env(safe-area-inset-left));
+  }
+  
+  .safe-area-right {
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
 }

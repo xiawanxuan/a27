@@ -2,11 +2,17 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tab-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.tab-card :global(.ant-card-body) {
+  padding: 20px;
 }
 
 .tab-header {
@@ -17,6 +23,8 @@
   display: flex;
   gap: 0;
   border-bottom: 2px solid #f0f0f0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tab {
@@ -28,6 +36,8 @@
   border-bottom: 3px solid transparent;
   margin-bottom: -2px;
   transition: all 0.3s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tab.active {
@@ -50,6 +60,12 @@
   font-size: 14px;
   color: #666;
   white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.select-section .ant-select {
+  flex: 1;
+  min-width: 0;
 }
 
 .feature-content {
@@ -77,6 +93,7 @@
   padding: 16px;
   background: #f9f9f9;
   border-radius: 8px;
+  min-width: 0;
 }
 
 .empty-feature {
@@ -132,12 +149,36 @@
   font-size: 12px;
   max-height: 300px;
   overflow-y: auto;
+  word-break: break-all;
 }
 
 @media (max-width: 768px) {
+  .analysis-page {
+    gap: 12px;
+  }
+
+  .tab-card :global(.ant-card-body) {
+    padding: 16px;
+  }
+
+  .tab-header {
+    margin-bottom: 16px;
+  }
+
+  .tab {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
   .select-section {
     flex-direction: column;
     align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .select-section .label {
+    font-size: 13px;
   }
 
   .select-section .ant-select {
@@ -146,15 +187,147 @@
 
   .feature-stats {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .tabs {
-    overflow-x: auto;
+  .stat-item {
+    padding: 12px;
+  }
+
+  .feature-content {
+    gap: 12px;
+  }
+
+  .compare-select {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .compare-result {
+    gap: 12px;
+  }
+
+  .empty-feature {
+    padding: 40px 0;
+  }
+
+  .chart-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
+
+  .color-features-json {
+    padding: 12px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .analysis-page {
+    gap: 10px;
+  }
+
+  .tab-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 44px !important;
+  }
+
+  .tab-card :global(.ant-card-head-title) {
+    font-size: 14px !important;
+    padding: 10px 0 !important;
+  }
+
+  .tab-card :global(.ant-card-body) {
+    padding: 12px;
+  }
+
+  .tab-header {
+    margin-bottom: 12px;
   }
 
   .tab {
-    padding: 10px 16px;
-    font-size: 14px;
-    white-space: nowrap;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .select-section {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .select-section .label {
+    font-size: 12px;
+  }
+
+  .feature-stats {
+    gap: 10px;
+  }
+
+  .stat-item {
+    padding: 10px;
+  }
+
+  .feature-content {
+    gap: 10px;
+  }
+
+  .feature-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 40px !important;
+  }
+
+  .feature-card :global(.ant-card-head-title) {
+    font-size: 14px !important;
+    padding: 8px 0 !important;
+  }
+
+  .feature-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
+
+  .compare-select {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .compare-result {
+    gap: 10px;
+  }
+
+  .chart-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 40px !important;
+  }
+
+  .chart-card :global(.ant-card-head-title) {
+    font-size: 13px !important;
+    padding: 8px 0 !important;
+  }
+
+  .chart-card :global(.ant-card-body) {
+    padding: 10px !important;
+  }
+
+  .empty-feature {
+    padding: 30px 0;
+  }
+
+  .color-features-json {
+    padding: 10px;
+    font-size: 10px;
+    max-height: 200px;
+  }
+
+  .similarity-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 40px !important;
+  }
+
+  .similarity-card :global(.ant-card-head-title) {
+    font-size: 13px !important;
+    padding: 8px 0 !important;
+  }
+
+  .similarity-card :global(.ant-card-body) {
+    padding: 12px !important;
   }
 }

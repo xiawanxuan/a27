@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .search-card,
@@ -11,7 +13,7 @@
 }
 
 .search-card :global(.ant-card-body) {
-  padding-bottom: 0;
+  padding-bottom: 12px !important;
 }
 
 .search-form {
@@ -26,6 +28,11 @@
   font-size: 18px;
 }
 
+.table-card :global(.ant-table-wrapper) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .user-form {
   margin-top: 16px;
 }
@@ -35,20 +42,109 @@
 }
 
 @media (max-width: 768px) {
+  .user-management-page {
+    gap: 12px;
+  }
+
+  .search-card :global(.ant-card-body) {
+    padding: 16px !important;
+    padding-bottom: 8px !important;
+  }
+
   .search-form {
     flex-direction: column;
+    gap: 0;
   }
 
   .search-form :global(.ant-form-item) {
     margin-right: 0 !important;
-    margin-bottom: 12px;
+    margin-bottom: 12px !important;
+    width: 100% !important;
   }
 
   .search-form :global(.ant-form-item-control-input) {
     min-width: 100% !important;
   }
 
+  .search-form :global(.ant-input),
+  .search-form :global(.ant-select) {
+    width: 100% !important;
+  }
+
+  .search-form :global(.ant-space) {
+    width: 100%;
+  }
+
+  .search-form :global(.ant-space-item) {
+    flex: 1;
+    width: 100%;
+  }
+
+  .search-form :global(.ant-btn) {
+    width: 100%;
+  }
+
+  .table-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
+
   .table-card :global(.ant-table) {
     font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-management-page {
+    gap: 10px;
+  }
+
+  .search-card :global(.ant-card-body) {
+    padding: 12px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .search-form :global(.ant-form-item) {
+    margin-bottom: 10px !important;
+  }
+
+  .search-form :global(.ant-form-item-label) {
+    font-size: 13px;
+  }
+
+  .table-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 44px !important;
+  }
+
+  .table-card :global(.ant-card-head-title) {
+    font-size: 15px !important;
+    padding: 10px 0 !important;
+  }
+
+  .table-card :global(.ant-card-extra .ant-btn) {
+    height: 32px;
+    font-size: 12px;
+    padding: 0 10px;
+  }
+
+  .table-card :global(.ant-card-body) {
+    padding: 8px !important;
+  }
+
+  .table-card :global(.ant-table) {
+    font-size: 12px;
+  }
+
+  .table-card :global(.ant-table-thead > tr > th),
+  .table-card :global(.ant-table-tbody > tr > td) {
+    padding: 8px 10px !important;
+  }
+
+  .table-card :global(.ant-pagination) {
+    margin-top: 12px !important;
+  }
+
+  .user-form {
+    margin-top: 12px;
   }
 }

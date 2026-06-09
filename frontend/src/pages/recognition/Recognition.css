@@ -2,11 +2,13 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .recognition-left {
   flex: 1;
-  min-width: 0;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -54,6 +56,7 @@
   color: #1B5E20;
   margin-bottom: 4px;
   font-family: 'Lora', Georgia, serif;
+  word-break: break-word;
 }
 
 .predicted-latin {
@@ -61,6 +64,7 @@
   color: #666;
   font-style: italic;
   margin-bottom: 16px;
+  word-break: break-word;
 }
 
 .confidence-section {
@@ -122,12 +126,18 @@
   font-weight: 500;
   color: #333;
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .prediction-latin {
   font-size: 12px;
   color: #999;
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .prediction-confidence {
@@ -146,6 +156,7 @@
   color: #999;
   font-size: 13px;
   line-height: 1.8;
+  text-align: center;
 }
 
 .history-item {
@@ -210,26 +221,240 @@
   color: #666;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .recognition-page {
     flex-direction: column;
   }
 
+  .recognition-left,
   .recognition-right {
     width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .recognition-page {
+    gap: 12px;
+  }
+
+  .recognition-left {
+    gap: 12px;
   }
 
   .predicted-name {
     font-size: 24px;
   }
-}
 
-@media (max-width: 480px) {
-  .predicted-name {
-    font-size: 20px;
+  .predicted-latin {
+    font-size: 14px;
+  }
+
+  .confidence-section {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .top-predictions h4 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .prediction-item {
+    padding: 10px 0 !important;
+  }
+
+  .prediction-rank {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .prediction-info {
+    margin-left: 10px;
   }
 
   .prediction-name {
     font-size: 14px;
+  }
+
+  .prediction-latin {
+    font-size: 11px;
+  }
+
+  .upload-section :global(.ant-card-body),
+  .result-card :global(.ant-card-body),
+  .empty-card :global(.ant-card-body),
+  .history-card :global(.ant-card-body) {
+    padding: 16px !important;
+  }
+
+  .result-preview {
+    margin-bottom: 12px;
+  }
+
+  .preview-image {
+    max-height: 250px;
+  }
+
+  .history-thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .history-info {
+    margin-left: 10px;
+  }
+
+  .history-name {
+    font-size: 13px;
+  }
+
+  .history-meta {
+    gap: 6px;
+  }
+
+  .history-confidence {
+    font-size: 11px;
+  }
+
+  .empty-card {
+    min-height: 250px;
+  }
+
+  .empty-tips {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .recognition-page {
+    gap: 10px;
+  }
+
+  .recognition-left {
+    gap: 10px;
+  }
+
+  .upload-section :global(.ant-card-head),
+  .result-card :global(.ant-card-head),
+  .history-card :global(.ant-card-head) {
+    padding: 0 12px !important;
+    min-height: 44px !important;
+  }
+
+  .upload-section :global(.ant-card-head-title),
+  .result-card :global(.ant-card-head-title),
+  .history-card :global(.ant-card-head-title) {
+    font-size: 14px !important;
+    padding: 10px 0 !important;
+  }
+
+  .upload-section :global(.ant-card-body),
+  .result-card :global(.ant-card-body),
+  .empty-card :global(.ant-card-body),
+  .history-card :global(.ant-card-body) {
+    padding: 12px !important;
+  }
+
+  .predicted-name {
+    font-size: 20px;
+  }
+
+  .predicted-latin {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .confidence-section {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .confidence-label {
+    font-size: 13px;
+  }
+
+  .top-predictions h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .prediction-item {
+    padding: 8px 0 !important;
+  }
+
+  .prediction-rank {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .prediction-info {
+    margin-left: 8px;
+  }
+
+  .prediction-name {
+    font-size: 13px;
+  }
+
+  .prediction-latin {
+    font-size: 10px;
+  }
+
+  .result-preview {
+    margin-bottom: 10px;
+  }
+
+  .preview-image {
+    max-height: 200px;
+  }
+
+  .history-thumb {
+    width: 48px;
+    height: 48px;
+  }
+
+  .history-info {
+    margin-left: 8px;
+  }
+
+  .history-name {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .history-meta {
+    gap: 4px;
+  }
+
+  .history-confidence {
+    font-size: 10px;
+  }
+
+  .empty-card {
+    min-height: 200px;
+  }
+
+  .empty-tips {
+    font-size: 11px;
+  }
+
+  .ant-upload-drag {
+    padding: 20px !important;
+  }
+
+  .ant-upload-drag-icon {
+    font-size: 36px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .ant-upload-text {
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .ant-upload-hint {
+    font-size: 12px !important;
   }
 }

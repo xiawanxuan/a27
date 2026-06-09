@@ -1,0 +1,18 @@
+[gd_resource type="Theme" load_steps=3 format=3]
+
+[ext_resource type="StyleBox" path="res://themes/styleboxes/panel.tres" id="1"]
+[ext_resource type="StyleBox" path="res://themes/styleboxes/button.tres" id="2"]
+
+[resource]
+default_font_size = 18
+
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_color_hover = Color(0.95, 0.85, 0.9, 1)
+Button/colors/font_color_pressed = Color(1, 0.7, 0.75, 1)
+Button/colors/font_color_disabled = Color(0.5, 0.5, 0.5, 1)
+Button/styles/normal = ExtResource("2")
+Button/styles/hover = ExtResource("2")
+Button/styles/pressed = ExtResource("2")
+Button/styles/disabled = ExtResource("2")
+
+Panel/styles/panel = ExtResource("1")

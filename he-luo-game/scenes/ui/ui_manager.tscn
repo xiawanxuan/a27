@@ -1,0 +1,60 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/ui_manager.gd" id="1"]
+
+[node name="UIManager" type="CanvasLayer"]
+script = ExtResource("1")
+
+[node name="HintPanel" type="Panel" parent="."]
+offset_left = 250.0
+offset_top = 20.0
+offset_right = 550.0
+offset_bottom = 60.0
+
+[node name="HintLabel" type="Label" parent="HintPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "提示信息"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 18
+
+[node name="VictoryPanel" type="Panel" parent="."]
+offset_left = 200.0
+offset_top = 180.0
+offset_right = 600.0
+offset_bottom = 420.0
+
+[node name="VBox" type="VBoxContainer" parent="VictoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="VictoryLabel" type="Label" parent="VictoryPanel/VBox"]
+layout_mode = 2
+text = "恭喜通关！"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="VictoryPanel/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 15
+
+[node name="ReplayButton" type="Button" parent="VictoryPanel/VBox/ButtonsContainer"]
+layout_mode = 2
+text = "重玩"
+custom_minimum_size = Vector2(80, 40)
+
+[node name="ContinueButton" type="Button" parent="VictoryPanel/VBox/ButtonsContainer"]
+layout_mode = 2
+text = "继续"
+custom_minimum_size = Vector2(80, 40)

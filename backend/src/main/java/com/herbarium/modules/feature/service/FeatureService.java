@@ -1,6 +1,7 @@
 package com.herbarium.modules.feature.service;
 
 import com.herbarium.common.exception.BusinessException;
+import com.herbarium.common.util.ImageUtils;
 import com.herbarium.common.util.JsonUtils;
 import com.herbarium.modules.feature.dto.FeatureCompareRequestDTO;
 import com.herbarium.modules.feature.dto.FeatureCompareResultDTO;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -30,30 +34,7 @@ public class FeatureService {
     private final SpecimenRepository specimenRepository;
     private final SpecimenImageRepository specimenImageRepository;
 
-    private static final String[] LEAF_SHAPES = {
-            "卵形", "椭圆形", "披针形", "心形", "圆形",
-            "戟形", "箭形", "楔形", "匙形", "菱形"
-    };
-
-    private static final String[] LEAF_MARGINS = {
-            "全缘", "锯齿", "重锯齿", "齿状", "波状",
-            "浅裂", "深裂", "全裂", "睫毛状", "钝齿"
-    };
-
-    private static final String[] LEAF_APEXES = {
-            "渐尖", "急尖", "钝形", "圆形", "微凹",
-            "倒心形", "尾尖", "芒尖", "凸尖", "截形"
-    };
-
-    private static final String[] LEAF_BASES = {
-            "楔形", "圆形", "心形", "箭形", "戟形",
-            "渐狭", "偏斜", "耳垂形", "盾形", "截形"
-    };
-
-    private static final String[] TEXTURES = {
-            "革质", "纸质", "肉质", "膜质", "草质",
-            "木栓质", "海绵质", "粗糙", "光滑", "被毛"
-    };
+    private static final String BASE_UPLOAD_PATH = "./uploads";
 
     @Transactional
     public FeatureExtractResultDTO extractFeatures(Long specimenId) {
@@ -65,27 +46,34 @@ public class FeatureService {
             throw new BusinessException("标本没有图片，无法提取特征");
         }
 
-        Random random = new Random(specimenId);
+        SpecimenImage firstImage = images.get(0);
+        String imageUrl = firstImage.getImageUrl();
+        String imagePath = convertUrlToPath(imageUrl);
 
-        BigDecimal leafLength = BigDecimal.valueOf(30 + random.nextDouble() * 170)
-                .setScale(2, RoundingMode.HALF_UP);
-        BigDecimal leafWidth = BigDecimal.valueOf(10 + random.nextDouble() * 80)
-                .setScale(2, RoundingMode.HALF_UP);
-        BigDecimal leafArea = leafLength.multiply(leafWidth).multiply(BigDecimal.valueOf(0.6 + random.nextDouble() * 0.3))
-                .setScale(2, RoundingMode.HALF_UP);
-        BigDecimal leafPerimeter = BigDecimal.valueOf(2 * (leafLength.doubleValue() + leafWidth.doubleValue()) * 0.8)
-                .setScale(2, RoundingMode.HALF_UP);
-        BigDecimal aspectRatio = leafLength.divide(leafWidth, 2, RoundingMode.HALF_UP);
+        BufferedImage image = loadImage(imagePath);
 
-        String leafShape = LEAF_SHAPES[random.nextInt(LEAF_SHAPES.length)];
-        String leafMargin = LEAF_MARGINS[random.nextInt(LEAF_MARGINS.length)];
-        String leafApex = LEAF_APEXES[random.nextInt(LEAF_APEXES.length)];
-        String leafBase = LEAF_BASES[random.nextInt(LEAF_BASES.length)];
-        String texture = TEXTURES[random.nextInt(TEXTURES.length)];
+        ImageUtils.LeafFeatures leafFeatures = ImageUtils.extractLeafFeatures(image);
 
-        Map<String, Object> colorFeatures = generateColorFeatures(random);
+        BigDecimal leafLength = BigDecimal.valueOf(leafFeatures.leafLength)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal leafWidth = BigDecimal.valueOf(leafFeatures.leafWidth)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal leafArea = BigDecimal.valueOf(leafFeatures.leafArea)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal leafPerimeter = BigDecimal.valueOf(leafFeatures.leafPerimeter)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal aspectRatio = BigDecimal.valueOf(leafFeatures.aspectRatio)
+                .setScale(2, RoundingMode.HALF_UP);
 
-        List<Double> featureVector = generateFeatureVector(random, 128);
+        String leafShape = leafFeatures.leafShape;
+        String leafMargin = leafFeatures.leafMargin;
+        String leafApex = leafFeatures.leafApex;
+        String leafBase = leafFeatures.leafBase;
+        String texture = leafFeatures.texture;
+
+        Map<String, Object> colorFeatures = leafFeatures.colorFeatures;
+
+        List<Double> featureVector = leafFeatures.featureVector;
 
         FeatureData featureData = featureDataRepository.findBySpecimenId(specimenId).orElse(null);
         if (featureData == null) {
@@ -150,7 +138,6 @@ public class FeatureService {
                 }
                 featureValues.put(specimenId, values);
             } catch (Exception e) {
-                // skip invalid specimens
             }
         }
 
@@ -185,60 +172,38 @@ public class FeatureService {
         return result;
     }
 
-    private Map<String, Object> generateColorFeatures(Random random) {
-        Map<String, Object> colorFeatures = new HashMap<>();
-
-        Map<String, double[]> dominantColors = new HashMap<>();
-        dominantColors.put("green", new double[]{
-                34 + random.nextDouble() * 30,
-                100 + random.nextDouble() * 100,
-                34 + random.nextDouble() * 30
-        });
-        dominantColors.put("yellowGreen", new double[]{
-                154 + random.nextDouble() * 50,
-                205 + random.nextDouble() * 50,
-                50 + random.nextDouble() * 30
-        });
-        dominantColors.put("darkGreen", new double[]{
-                0 + random.nextDouble() * 20,
-                50 + random.nextDouble() * 50,
-                0 + random.nextDouble() * 20
-        });
-        colorFeatures.put("dominantColors", dominantColors);
-
-        Map<String, Double> colorMoments = new HashMap<>();
-        colorMoments.put("meanHue", 100 + random.nextDouble() * 40);
-        colorMoments.put("meanSaturation", 0.5 + random.nextDouble() * 0.4);
-        colorMoments.put("meanValue", 0.4 + random.nextDouble() * 0.5);
-        colorMoments.put("varianceHue", 10 + random.nextDouble() * 20);
-        colorMoments.put("varianceSaturation", 0.05 + random.nextDouble() * 0.1);
-        colorMoments.put("varianceValue", 0.05 + random.nextDouble() * 0.1);
-        colorFeatures.put("colorMoments", colorMoments);
-
-        Map<String, Object> histogram = new HashMap<>();
-        List<Double> hueHistogram = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            hueHistogram.add(random.nextDouble());
+    private BufferedImage loadImage(String imagePath) {
+        try {
+            File file = new File(imagePath);
+            if (!file.exists()) {
+                throw new BusinessException("图片文件不存在: " + imagePath);
+            }
+            BufferedImage image = ImageIO.read(file);
+            if (image == null) {
+                throw new BusinessException("无法读取图片文件: " + imagePath);
+            }
+            return image;
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BusinessException("读取图片失败: " + e.getMessage());
         }
-        histogram.put("hue", hueHistogram);
-
-        List<Double> saturationHistogram = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            saturationHistogram.add(random.nextDouble());
-        }
-        histogram.put("saturation", saturationHistogram);
-
-        colorFeatures.put("histogram", histogram);
-
-        return colorFeatures;
     }
 
-    private List<Double> generateFeatureVector(Random random, int size) {
-        List<Double> vector = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            vector.add(random.nextDouble() * 2 - 1);
+    private String convertUrlToPath(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            throw new BusinessException("图片路径为空");
         }
-        return vector;
+        if (imageUrl.startsWith("/uploads/")) {
+            return BASE_UPLOAD_PATH + imageUrl.substring("/uploads".length());
+        }
+        if (imageUrl.startsWith("./")) {
+            return imageUrl;
+        }
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+            throw new BusinessException("不支持远程图片URL");
+        }
+        return BASE_UPLOAD_PATH + "/" + imageUrl;
     }
 
     private Double getFeatureValue(FeatureData featureData, String featureName) {

@@ -134,14 +134,20 @@ const MainLayout = () => {
   const openKeys = ['/' + location.pathname.split('/')[1]];
 
   return (
-    <Layout className="main-layout h-screen">
+    <Layout className="main-layout">
       <Sider
         trigger={null}
         collapsible
         collapsed={sidebarCollapsed}
-        className="sidebar hidden md:block"
+        className="sidebar"
         width={240}
         collapsedWidth={80}
+        breakpoint="md"
+        onBreakpoint={(broken) => {
+          if (broken && mobileMenuOpen) {
+            setMobileMenuOpen(false);
+          }
+        }}
       >
         <div className="logo-container">
           <div className="logo-icon">
